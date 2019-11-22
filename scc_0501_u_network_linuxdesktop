@@ -22,6 +22,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
 #
 # Created by Bill Dietrich
+# Version: 2
  
 set -u
 [ "${SCC_DEBUG:-}" ] && set -x
@@ -46,7 +47,7 @@ fi
 openvpn_bin="/usr/sbin/openvpn"
 if [ -x "${openvpn_bin}" ]
 then
-    echo 'var:network:desktop::Openvpn default gateway ' `${openvpn_bin} --show-gateway | sed -e 's/^.*ROUTE/ROUTE/'`
+    echo 'var:network:linuxdesktop::Openvpn default gateway ' `${openvpn_bin} --show-gateway | sed -e 's/^.*ROUTE/ROUTE/'`
     # seems to be no way show status of connection
     # cat /var/run/openvpn.openvpn.status ???
     # run systemctl status openvpn@* ???
@@ -56,30 +57,30 @@ fi
 windscribe_bin="/usr/bin/windscribe"
 if [ -x "${windscribe_bin}" ]
 then
-    echo 'var:network:desktop::Windscribe VPN ' `${windscribe_bin} status | grep 'IP:'`
-    echo 'var:network:desktop::Windscribe VPN ' `${windscribe_bin} status | grep 'CONNECTED'`
-    echo 'var:network:desktop::Windscribe VPN ' `${windscribe_bin} firewall | grep 'Firewall mode:'`
+    echo 'var:network:linuxdesktop::Windscribe VPN ' `${windscribe_bin} status | grep 'IP:'`
+    echo 'var:network:linuxdesktop::Windscribe VPN ' `${windscribe_bin} status | grep 'CONNECTED'`
+    echo 'var:network:linuxdesktop::Windscribe VPN ' `${windscribe_bin} firewall | grep 'Firewall mode:'`
 fi
 
 
 ip_bin="/sbin/ip"
 if [ -x "${ip_bin}" ]
 then
-    echo 'var:network:desktop::Router IP address ' `${ip_bin} route | grep default`
-    echo 'var:network:desktop::Router MAC address ' `${ip_bin} neigh`
+    echo 'var:network:linuxdesktop::Router IP address ' `${ip_bin} route | grep default`
+    echo 'var:network:linuxdesktop::Router MAC address ' `${ip_bin} neigh`
 fi
 
 dig_bin="/usr/bin/dig"
 if [ -x "${dig_bin}" ]
 then
-    echo 'var:network:desktop::System public IP address:  ' `${dig_bin} r +short myip.opendns.com @resolver1.opendns.com`
-    echo 'var:network:desktop::System public IP address:  ' `${dig_bin} TXT +short o-o.myaddr.l.google.com @ns1.google.com`
+    echo 'var:network:linuxdesktop::System public IP address:  ' `${dig_bin} r +short myip.opendns.com @resolver1.opendns.com`
+    echo 'var:network:linuxdesktop::System public IP address:  ' `${dig_bin} TXT +short o-o.myaddr.l.google.com @ns1.google.com`
 fi
 
 host_bin="/usr/bin/host"
 if [ -x "${host_bin}" ]
 then
-    echo 'var:network:desktop::System public IP address:  ' `${host_bin} myip.opendns.com resolver1.opendns.com | grep 'has address'`
+    echo 'var:network:linuxdesktop::System public IP address:  ' `${host_bin} myip.opendns.com resolver1.opendns.com | grep 'has address'`
 fi
 
 

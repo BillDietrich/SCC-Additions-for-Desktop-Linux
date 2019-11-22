@@ -21,13 +21,19 @@ sudo chmod -R a+r /var/opt/scc/data
 
 ## Added modules for desktop Linux
 
+Version 2.
+
 I created three new modules:
 
-* scc_0501_u_network_linuxdesktop
+* scc_0501_u_network_linuxdesktop: status of VPN, addresses of router, system public IP address.
 
-* scc_0601_u_software_linuxdesktop
+* scc_0601_u_software_linuxdesktop: all apps in /bin and so on, apt history.
 
-* scc_1001_s_users_linuxdesktop
+* scc_1001_s_users_linuxdesktop: for each user, check shell profile/rc files, Firefox, Tor Browser, Thunderbird.
+
+Installation: copy files to your disk, then at CLI run "CopyToModulesDir.sh".
+
+In the reports, items from these modules will show up with "linuxdesktop" tags on them.
 
 ## Taking more snapshots
 
@@ -55,6 +61,8 @@ sudo xed /opt/scc/bin/scc
 chmod -R a+r "${SCC_DATA}"
 # a bit dangerous: any user will be able to read some sensitive data in scc output
 ```
+
+Size of data under /var/opt/scc holds steady around 25 MB if you use SCC plus my three modules and "--max_age 1" ?
 
 ## Options
 
@@ -92,4 +100,13 @@ echo 'var:network1::static text followed by varying data ' `${some_bin} status |
 
 * SCC really is intended for a server system which rarely/never updates itself.  Updating your desktop Linux system, which you probably do daily or weekly, changes all kinds of things such as kernel version, specific app packages, etc.  So you will get lots of reports that those have changed.  Check them and compare to the updates you requested.
 
+* As I understand it, SCC really is intended to inform an administrator about "normal" configuration changes.  My additional modules act a little more like an Intrusion Detection System, reporting changes that might be "normal" (e.g. installed a new add-on in Firefox) or might be an exploit (e.g. /bin/bash changed).
+
+## To-Do
+
+* Add more browsers: Chrome, chromium.
+
+* Not sure if I'm using "fix" and "var" correctly.
+
+* I'm sure I have comment-char settings wrong on checking various files.
 

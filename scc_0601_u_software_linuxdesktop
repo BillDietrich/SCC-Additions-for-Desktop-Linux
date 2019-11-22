@@ -22,7 +22,8 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
 #
 # Created by Bill Dietrich
- 
+# Version: 2
+
 set -u
 [ "${SCC_DEBUG:-}" ] && set -x
 
@@ -51,7 +52,7 @@ do
 	then
 		ftmp="/tmp/sccdirs.txt"
 		ls -lAR --time-style=long-iso ${d} >${ftmp}
-		scc_check_file "${ftmp}" "fix:software:desktop:${d}::" "#"
+		scc_check_file "${ftmp}" "fix:software:linuxdesktop:${d}::" "#"
 		rm ${ftmp}
 	fi
 done
@@ -61,14 +62,14 @@ done
 f="/var/log/apt/history.log"
 if [ -f ${f} ]
 then
-	scc_check_file "${f}" "fix:software:desktop:apt:${f}::" "#"
+	scc_check_file "${f}" "fix:software:linuxdesktop:apt:${f}::" "#"
 fi
 f="/var/log/dpkg.log"
 if [ -f ${f} ]
 then
 	ftmp="/tmp/scclog.txt"
 	grep 'status installed' ${f} >${ftmp}
-	scc_check_file "${ftmp}" "fix:software:desktop:dpkg:${f}::" "#"
+	scc_check_file "${ftmp}" "fix:software:linuxdesktop:dpkg:${f}::" "#"
 	rm ${ftmp}
 fi
 

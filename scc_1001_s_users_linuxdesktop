@@ -22,7 +22,8 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
 #
 # Created by Bill Dietrich
- 
+# Version: 2
+
 set -u
 [ "${SCC_DEBUG:-}" ] && set -x
 
@@ -52,20 +53,20 @@ scc_check_desktop_user()
 		
 	for file in .bashrc .bash_logout .bash_profile .cshrc .tcshrc .gitconfig .netrc .profile .pam_environment .selected_editor .xinputrc .zlogin .zshrc
 	do
-		scc_check_file "${home}/${user}/${file}"  "fix:users:desktop:${user}:${file}::" "#" 
+		scc_check_file "${home}/${user}/${file}"  "fix:users:linuxdesktop:${user}:${file}::" "#" 
 	done
 	
 	#for binfile in SOMETHING
 	#do
-	#	echo "fix:users:desktop:${user}:${binfile}:: "  `cksum ${home}/${user}/${binfile}`
+	#	echo "fix:users:linuxdesktop:${user}:${binfile}:: "  `cksum ${home}/${user}/${binfile}`
 	#done
 
     # Firefox
     ffhome="${home}/${user}/.mozilla/firefox"
     if [ -d ${ffhome} ]
     then
-		scc_check_file "${ffhome}/installs.ini"  "fix:users:desktop:${user}:Firefox:installs.ini::" "#" 
-		scc_check_file "${ffhome}/profiles.ini"  "fix:users:desktop:${user}:Firefox:profiles.ini::" "#" 
+		scc_check_file "${ffhome}/installs.ini"  "fix:users:linuxdesktop:${user}:Firefox:installs.ini::" "#" 
+		scc_check_file "${ffhome}/profiles.ini"  "fix:users:linuxdesktop:${user}:Firefox:profiles.ini::" "#" 
 
 	    for pd in ${ffhome}/*
 	    do
@@ -74,7 +75,7 @@ scc_check_desktop_user()
     	        if [ "${pd}" != "${ffhome}/Crash Reports" -a "${pd}" != "${ffhome}/Pending Pings" ]
 	            # it's a profile
 		        then
-			        scc_check_file "${pd}/prefs.js" "fix:users:desktop:${user}:Firefox:${pd}:prefs.js::" "#"
+			        scc_check_file "${pd}/prefs.js" "fix:users:linuxdesktop:${user}:Firefox:${pd}:prefs.js::" "#"
 			        
 			        # JSON files that have no newlines in them; expand them before diffing them
 	                for file in addons.json containers.json extensions.json handlers.json
@@ -83,7 +84,7 @@ scc_check_desktop_user()
 		                then
 		                	f="/tmp/sccjson.txt"
 		                    sed 's/$/\n/' <"${pd}/${file}" | sed 's/\([{},]\)/\n\1\n/g' >${f}
-    		                scc_check_file "${f}"  "fix:users:desktop:${user}:Firefox:${pd}:${file}::" "#" 
+    		                scc_check_file "${f}"  "fix:users:linuxdesktop:${user}:Firefox:${pd}:${file}::" "#" 
                     		rm ${f}
                         fi
    	                done
@@ -98,7 +99,7 @@ scc_check_desktop_user()
 	    f="${tordir}/Browser/TorBrowser/Data/Browser/profiles.ini"
         if [ -f ${f} ]
         then
-		    scc_check_file "${f}"  "fix:users:desktop:${user}:TorBrowser:${f}::" "#"
+		    scc_check_file "${f}"  "fix:users:linuxdesktop:${user}:TorBrowser:${f}::" "#"
 
             torhome="${tordir}/Browser/TorBrowser/Data/Browser"
 	        for pd in ${torhome}/*
@@ -108,7 +109,7 @@ scc_check_desktop_user()
         	        if [ "${pd}" != "${torhome}/Caches" -a "${pd}" != "${torhome}/profile.meek-http-helper" -a "${pd}" != "${torhome}/profile.moat-http-helper" ]
 	                # it's a profile
 		            then
-			            scc_check_file "${pd}/prefs.js" "fix:users:desktop:${user}:TorBrowser:${pd}:prefs.js::" "#"
+			            scc_check_file "${pd}/prefs.js" "fix:users:linuxdesktop:${user}:TorBrowser:${pd}:prefs.js::" "#"
 			            
 			            # JSON files that have no newlines in them; expand them before diffing them
 	                    for file in addons.json containers.json extensions.json handlers.json xulstore.json
@@ -117,15 +118,54 @@ scc_check_desktop_user()
 		                    then
 		                    	f="/tmp/sccjson.txt"
 		                        sed 's/$/\n/' <"${pd}/${file}" | sed 's/\([{},]\)/\n\1\n/g' >${f}
-        		                scc_check_file "${f}"  "fix:users:desktop:${user}:TorBrowser:${pd}:${file}::" "#" 
+        		                scc_check_file "${f}"  "fix:users:linuxdesktop:${user}:TorBrowser:${pd}:${file}::" "#" 
                         		rm ${f}
                             fi
        	                done
+
 		            fi
 	            fi
 	        done
 		fi
 	done
+
+    # Thunderbird
+    tbhome="${home}/${user}/.thunderbird"
+    if [ -d ${tbhome} ]
+    then
+		scc_check_file "${tbhome}/installs.ini"  "fix:users:linuxdesktop:${user}:Thunderbird:installs.ini::" "#" 
+		scc_check_file "${tbhome}/profiles.ini"  "fix:users:linuxdesktop:${user}:Thunderbird:profiles.ini::" "#" 
+
+	    for pd in ${tbhome}/*
+	    do
+	        if [ -d "${pd}" ]
+	        then
+    	        if [ "${pd}" != "${tbhome}/Crash Reports" -a "${pd}" != "${tbhome}/Pending Pings" ]
+	            # it's a profile
+		        then
+			        scc_check_file "${pd}/prefs.js" "fix:users:linuxdesktop:${user}:Thunderbird:${pd}:prefs.js::" "#"
+			        scc_check_file "${pd}/pkcs11.txt" "fix:users:linuxdesktop:${user}:Thunderbird:${pd}:pkcs11.txt::" "#"
+			        
+			        # JSON files that have no newlines in them; expand them before diffing them
+	                for file in addons.json directoryTree.json extension-preferences.json extensions.json folderTree.json handlers.json logins.json
+	                do
+		                if [ -f ${pd}/${file} ]
+		                then
+		                	f="/tmp/sccjson.txt"
+		                    sed 's/$/\n/' <"${pd}/${file}" | sed 's/\([{},]\)/\n\1\n/g' >${f}
+    		                scc_check_file "${f}"  "fix:users:linuxdesktop:${user}:Thunderbird:${pd}:${file}::" "#" 
+                    		rm ${f}
+                        fi
+   	                done
+       	                
+                    ftmp="/tmp/sccfiles.txt"
+                    ls -l --time-style=long-iso ${pd}/cert9.db ${pd}/key4.db >${ftmp}
+                    scc_check_file "${ftmp}" "fix:users:linuxdesktop:${user}:Thunderbird:${pd}:dbfiles::" "#"
+                    rm ${ftmp}
+		        fi
+	        fi
+	    done
+    fi
 
 }
 
