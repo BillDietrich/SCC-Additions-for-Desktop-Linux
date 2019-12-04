@@ -22,7 +22,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
 #
 # Created by Bill Dietrich
-# Version: 2
+# Version: 3
 
 set -u
 [ "${SCC_DEBUG:-}" ] && set -x
@@ -80,7 +80,7 @@ scc_check_desktop_user()
 			        # JSON files that have no newlines in them; expand them before diffing them
 	                for file in addons.json containers.json extensions.json handlers.json
 	                do
-		                if [ -f ${pd}/${file} ]
+		                if [ -f "${pd}/${file}" ]
 		                then
 		                	f="/tmp/sccjson.txt"
 		                    sed 's/$/\n/' <"${pd}/${file}" | sed 's/\([{},]\)/\n\1\n/g' >${f}
@@ -97,7 +97,7 @@ scc_check_desktop_user()
 	for tordir in `find ${home}/${user} -type d -maxdepth 2 -name 'tor-browser_*' -print`
 	do
 	    f="${tordir}/Browser/TorBrowser/Data/Browser/profiles.ini"
-        if [ -f ${f} ]
+        if [ -f "${f}" ]
         then
 		    scc_check_file "${f}"  "fix:users:linuxdesktop:${user}:TorBrowser:${f}::" "#"
 
@@ -114,7 +114,7 @@ scc_check_desktop_user()
 			            # JSON files that have no newlines in them; expand them before diffing them
 	                    for file in addons.json containers.json extensions.json handlers.json xulstore.json
 	                    do
-		                    if [ -f ${pd}/${file} ]
+		                    if [ -f "${pd}/${file}" ]
 		                    then
 		                    	f="/tmp/sccjson.txt"
 		                        sed 's/$/\n/' <"${pd}/${file}" | sed 's/\([{},]\)/\n\1\n/g' >${f}
@@ -149,7 +149,7 @@ scc_check_desktop_user()
 			        # JSON files that have no newlines in them; expand them before diffing them
 	                for file in addons.json directoryTree.json extension-preferences.json extensions.json folderTree.json handlers.json logins.json
 	                do
-		                if [ -f ${pd}/${file} ]
+		                if [ -f "${pd}/${file}" ]
 		                then
 		                	f="/tmp/sccjson.txt"
 		                    sed 's/$/\n/' <"${pd}/${file}" | sed 's/\([{},]\)/\n\1\n/g' >${f}
@@ -165,6 +165,96 @@ scc_check_desktop_user()
 		        fi
 	        fi
 	    done
+    fi
+
+    # Chromium
+    chome="${home}/${user}/.config/chromium"
+    if [ -d ${chome} ]
+    then
+
+	    for pd in ${chome}/*
+	    do
+	        if [ -d "${pd}" ]
+	        then
+    	        if [ "${pd}" != "${chome}/Crash Reports" -a "${pd}" != "${chome}/Dictionaries" -a "${pd}" != "${chome}/NativeMessagingHosts" -a "${pd}" != "${chome}/ShaderCache" ]
+	            # it's a profile
+		        then
+			        scc_check_file "${pd}/Bookmarks" "fix:users:linuxdesktop:${user}:Chromium:${pd}:Bookmarks::" "#"
+			        
+			        # JSON files that have no newlines in them; expand them before diffing them
+	                for file in Preferences 'Secure Preferences'
+	                do
+		                if [ -f "${pd}/${file}" ]
+		                then
+		                	f="/tmp/sccjson.txt"
+		                    sed 's/$/\n/' <"${pd}/${file}" | sed 's/\([{},]\)/\n\1\n/g' >${f}
+    		                scc_check_file "${f}"  "fix:users:linuxdesktop:${user}:Chromium:${pd}:${file}::" "#" 
+                    		rm ${f}
+                        fi
+   	                done
+       	                
+                    ftmp="/tmp/sccfiles.txt"
+                    ls -l --time-style=long-iso ${pd}/'Origin Bound Certs' >${ftmp}
+                    scc_check_file "${ftmp}" "fix:users:linuxdesktop:${user}:Chromium:${pd}:OriginBoundCerts::" "#"
+                    rm ${ftmp}
+		        fi
+	        fi
+	    done
+    fi
+
+    # Chrome
+    chome="${home}/${user}/.config/google-chrome"
+    if [ -d ${chome} ]
+    then
+
+	    for pd in ${chome}/*
+	    do
+	        if [ -d "${pd}" ]
+	        then
+    	        if [ "${pd}" != "${chome}/Crash Reports" -a "${pd}" != "${chome}/Dictionaries" -a "${pd}" != "${chome}/NativeMessagingHosts" -a "${pd}" != "${chome}/ShaderCache" ]
+	            # it's a profile
+		        then
+			        scc_check_file "${pd}/Bookmarks" "fix:users:linuxdesktop:${user}:Chrome:${pd}:Bookmarks::" "#"
+			        
+			        # JSON files that have no newlines in them; expand them before diffing them
+	                for file in Preferences 'Secure Preferences'
+	                do
+		                if [ -f "${pd}/${file}" ]
+		                then
+		                	f="/tmp/sccjson.txt"
+		                    sed 's/$/\n/' <"${pd}/${file}" | sed 's/\([{},]\)/\n\1\n/g' >${f}
+    		                scc_check_file "${f}"  "fix:users:linuxdesktop:${user}:Chrome:${pd}:${file}::" "#" 
+                    		rm ${f}
+                        fi
+   	                done
+       	                
+                    ftmp="/tmp/sccfiles.txt"
+                    ls -l --time-style=long-iso ${pd}/'Origin Bound Certs' >${ftmp}
+                    scc_check_file "${ftmp}" "fix:users:linuxdesktop:${user}:Chrome:${pd}:OriginBoundCerts::" "#"
+                    rm ${ftmp}
+		        fi
+	        fi
+	    done
+    fi
+
+    # Wine
+    whome="${home}/${user}/.wine"
+    if [ -d ${whome} ]
+    then
+		scc_check_file "${whome}/userdef.reg"  "fix:users:linuxdesktop:${user}:Wine:userdef.reg::" "#" 
+    fi
+
+    # Desktop file associations ?
+    dhome="${home}/${user}/.local/share/applications"
+    if [ -d ${dhome} ]
+    then
+		for file in ${dhome}/*
+		do
+			if [ -f "${file}" ]
+			then
+				scc_check_file "${file}"  "fix:users:linuxdesktop:${user}:${dhome}:${file}::" "#" 
+			fi
+		done
     fi
 
 }

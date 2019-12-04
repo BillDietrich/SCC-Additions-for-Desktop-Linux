@@ -21,7 +21,7 @@ sudo chmod -R a+r /var/opt/scc/data
 
 ## Added modules for desktop Linux
 
-Version 2.
+Version 3.
 
 I created three new modules:
 
@@ -62,7 +62,7 @@ chmod -R a+r "${SCC_DATA}"
 # a bit dangerous: any user will be able to read some sensitive data in scc output
 ```
 
-Size of data under /var/opt/scc holds steady around 25 MB if you use SCC plus my three modules and "--max_age 1" ?
+Size of data under /var/opt/scc grows to around 52 MB if you use SCC plus my three modules and "--max_age 1" ?
 
 ## Options
 
@@ -104,9 +104,10 @@ echo 'var:network1::static text followed by varying data ' `${some_bin} status |
 
 ## To-Do
 
-* Add more browsers: Chrome, chromium.
-
 * Not sure if I'm using "fix" and "var" correctly.
 
 * I'm sure I have comment-char settings wrong on checking various files.
+
+* Add checking: history of logins ("last" command, file explorer extensions or desktop changes (launcher, systray, extensions), source editor extensions or config changes, repo list (/etc/apt/sources.list and /etc/apt/sources.list.d/*.list), file /root/.forward (related to postfix), /var/log/apt/history.log file.
+
 
