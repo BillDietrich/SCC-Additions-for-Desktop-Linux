@@ -22,7 +22,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
 #
 # Created by Bill Dietrich
-# Version: 3
+# Version: 4
 
 set -u
 [ "${SCC_DEBUG:-}" ] && set -x
@@ -56,14 +56,14 @@ scc_check_desktop_user()
 		scc_check_file "${home}/${user}/${file}"  "fix:users:linuxdesktop:${user}:${file}::" "#" 
 	done
 	
-	#for binfile in SOMETHING
-	#do
-	#	echo "fix:users:linuxdesktop:${user}:${binfile}:: "  `cksum ${home}/${user}/${binfile}`
-	#done
+	for binfile in .local/share/keyrings/user.keystore
+	do
+		echo "fix:users:linuxdesktop:${user}:${binfile}:: "  `cksum ${home}/${user}/${binfile}`
+	done
 
     # Firefox
     ffhome="${home}/${user}/.mozilla/firefox"
-    if [ -d ${ffhome} ]
+    if [ -d "${ffhome}" ]
     then
 		scc_check_file "${ffhome}/installs.ini"  "fix:users:linuxdesktop:${user}:Firefox:installs.ini::" "#" 
 		scc_check_file "${ffhome}/profiles.ini"  "fix:users:linuxdesktop:${user}:Firefox:profiles.ini::" "#" 
@@ -131,7 +131,7 @@ scc_check_desktop_user()
 
     # Thunderbird
     tbhome="${home}/${user}/.thunderbird"
-    if [ -d ${tbhome} ]
+    if [ -d "${tbhome}" ]
     then
 		scc_check_file "${tbhome}/installs.ini"  "fix:users:linuxdesktop:${user}:Thunderbird:installs.ini::" "#" 
 		scc_check_file "${tbhome}/profiles.ini"  "fix:users:linuxdesktop:${user}:Thunderbird:profiles.ini::" "#" 
@@ -169,7 +169,7 @@ scc_check_desktop_user()
 
     # Chromium
     chome="${home}/${user}/.config/chromium"
-    if [ -d ${chome} ]
+    if [ -d "${chome}" ]
     then
 
 	    for pd in ${chome}/*
@@ -204,7 +204,7 @@ scc_check_desktop_user()
 
     # Chrome
     chome="${home}/${user}/.config/google-chrome"
-    if [ -d ${chome} ]
+    if [ -d "${chome}" ]
     then
 
 	    for pd in ${chome}/*
@@ -239,14 +239,27 @@ scc_check_desktop_user()
 
     # Wine
     whome="${home}/${user}/.wine"
-    if [ -d ${whome} ]
+    if [ -d "${whome}" ]
     then
 		scc_check_file "${whome}/userdef.reg"  "fix:users:linuxdesktop:${user}:Wine:userdef.reg::" "#" 
     fi
 
     # Desktop file associations ?
     dhome="${home}/${user}/.local/share/applications"
-    if [ -d ${dhome} ]
+    if [ -d "${dhome}" ]
+    then
+		for file in ${dhome}/*
+		do
+			if [ -f "${file}" ]
+			then
+				scc_check_file "${file}"  "fix:users:linuxdesktop:${user}:${dhome}:${file}::" "#" 
+			fi
+		done
+    fi
+
+    # Nemo file-explorer scripts ?
+    dhome="${home}/${user}/.local/share/nemo/scripts"
+    if [ -d "${dhome}" ]
     then
 		for file in ${dhome}/*
 		do
